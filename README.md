@@ -1,7 +1,7 @@
 # Ctrl Z Colectivo Creativo — Portafolio interactivo
 
 ## Estructura
-- `index.html` — 9 diapositivas (textos fijos editables directamente).
+- `index.html` — 9 secciones en una sola página con scroll (textos fijos editables directamente).
 - `js/content.js` — **contactos, métricas, equipo, servicios, proyectos y casos**. Aquí se edita casi todo.
 - `css/styles.css` — variables de color y tipografía en `:root`.
 - `img/` — logo (`logo.png`), fotos y portadas. `video/` — videos comprimidos (MP4 H.264).
@@ -19,10 +19,9 @@
 - Texto: edita `index.html` o `content.js`.
 
 ## Vista local
-Abre `index.html` en el navegador (requiere internet para Google Fonts). Navegación: flechas del teclado, botones, deslizar en móvil, menú superior.
+Abre `index.html` en el navegador (requiere internet para Google Fonts). Navegación: scroll, menú fijo superior (marca la sección activa) y botón «Trabajemos juntos». En el visor de imágenes: flechas y Esc.
 
 ## Publicar gratis
 - **Netlify:** app.netlify.com/drop → arrastra la carpeta.
 - **Cloudflare Pages:** Workers & Pages → Create → Pages → Upload assets → sube la carpeta (sin build).
 Para revisión privada usa la URL temporal de la plataforma (o protección con contraseña si tu plan la ofrece); la página incluye `noindex`. Quita esa etiqueta al publicar la versión final.
-# ctrlzcolectivocreativo

@@ -123,3 +123,18 @@ nav button.on{background:var(--p);color:#fff;opacity:1}
 @media(max-width:860px){.s.d.hero{background-size:205% auto;background-position:100% 8%;background-repeat:no-repeat}
 .hero:before{background:linear-gradient(0deg,rgba(40,40,40,.95) 0%,rgba(40,40,40,.8) 38%,transparent 62%)}
 .hero .in{justify-content:flex-start}.hero .cover{padding-top:min(35vh,280px)}.hero h1{font-size:2.2rem}.hero .lead{font-size:1rem}}
+/* ===== MODO WEB (scroll vertical) ===== */
+html{scroll-behavior:smooth;scroll-padding-top:70px;height:auto;overflow-x:hidden;overflow-y:auto}body{height:auto;overflow:visible}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+header{background:rgba(56,56,56,.9);backdrop-filter:blur(10px);pointer-events:auto}
+nav{background:none;padding:0}
+.s,.s.prev{position:relative;inset:auto;opacity:1;visibility:visible;transform:none;overflow:visible;transition:none;min-height:0;padding:clamp(90px,14vh,150px) clamp(20px,6vw,90px)}
+.s.hero{min-height:100vh;padding-top:110px;display:flex}
+.in{min-height:0}.hero .in{justify-content:center;width:100%}
+.bar{justify-content:flex-end;padding:16px clamp(16px,3vw,40px)}
+.bar .pr{position:fixed;top:0;left:0;right:0;height:4px;border-radius:0;background:transparent!important;flex:none}
+.bar .cta{box-shadow:0 5px 0 #8fb021,0 10px 24px rgba(0,0,0,.35)}
+nav button{opacity:.75}
+.th{margin-top:.5rem}
+.s .in>.rv{width:100%}
+@media(max-width:860px){.s,.s.prev{padding:84px 18px}.s.hero{padding-top:90px;min-height:100svh}.hero .in{justify-content:flex-start}}

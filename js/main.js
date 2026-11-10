@@ -3,16 +3,18 @@ const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const slides=$$('.s');let cur=0;
 const names=['Inicio','Qué hacemos','Servicios','Trabajo','Casos','Método','Nosotros','Contratar','Contacto'];
 const IDX={svc:2,work:3,last:slides.length-1};
-$('nav').innerHTML=names.map((n,i)=>`<button data-g="${i}">${String(i+1).padStart(2,'0')} ${n}</button>`).join('');
+$('nav').innerHTML=names.map((n,i)=>`<button data-g="${i}">${n}</button>`).join('');
 $$('.rv').forEach(r=>[...r.children].forEach((c,i)=>c.style.setProperty('--i',i)));
-function go(i){i=Math.max(0,Math.min(slides.length-1,i));cur=i;
- slides.forEach((s,k)=>{s.classList.toggle('on',k===i);s.classList.toggle('prev',k<i);s.inert=k!==i;if(k!==i)$$('video',s).forEach(v=>v.pause())});
- $$('nav button').forEach((b,k)=>b.classList.toggle('on',k===i));
- $('.pr i').style.width=((i+1)/slides.length*100)+'%';$('.ct').textContent=(i+1)+' / '+slides.length;
- $('.cta').style.display=(i===IDX.svc||i===IDX.last)?'none':'';slides[i].scrollTop=0;history.replaceState(null,'','#'+(i+1));
- if(i===IDX.work)odo();$$('nav button')[i].scrollIntoView({inline:'center',block:'nearest'})}
+function go(i){slides[i].scrollIntoView({behavior:'smooth',block:'start'})}
 document.addEventListener('click',e=>{const g=e.target.closest('[data-g]');if(g)go(+g.dataset.g)});
-$('.pv0').onclick=()=>go(cur-1);$('.nx0').onclick=()=>go(cur+1);
+new IntersectionObserver(es=>es.forEach(e=>{const s=e.target;if(e.isIntersecting){s.classList.add('on');if(slides.indexOf(s)===IDX.work)odo()}else $$('video',s).forEach(v=>v.pause())}),{threshold:.12}).observe&&0;
+const io=new IntersectionObserver(es=>es.forEach(e=>{const s=e.target;if(e.isIntersecting){s.classList.add('on');if(slides.indexOf(s)===IDX.work)odo()}else $$('video',s).forEach(v=>v.pause())}),{threshold:.12});
+slides.forEach(s=>io.observe(s));
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;cur=slides.indexOf(e.target);
+ $$('nav button').forEach((b,k)=>b.classList.toggle('on',k===cur));$('.cta').style.display=(cur===IDX.svc||cur===IDX.last)?'none':'';
+ $$('nav button')[cur].scrollIntoView({inline:'center',block:'nearest'})}),{rootMargin:'-45% 0px -50% 0px'});
+slides.forEach(s=>spy.observe(s));
+addEventListener('scroll',()=>{const h=document.documentElement;$('.pr i').style.width=(h.scrollTop/Math.max(1,h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
 $('#main-cta').onclick=e=>{e.preventDefault();go(IDX.svc)};
 /* enlaces (solo los que tienen dato real) */
 const L=[['whatsapp','WhatsApp'+(CONTACT.phone?' · '+CONTACT.phone:'')],['instagram','Instagram'],['behance','Behance'],['email','Correo'],['web','Sitio web'],['linkedin','LinkedIn']];
@@ -30,8 +32,8 @@ const lbv=$('#lb video'),lbi=$('#lb img');let lb={list:[],i:0};
 function show(){const it=lb.list[lb.i];lbv.pause();
  if(it.video){lbi.hidden=true;lbv.hidden=false;lbv.poster=it.poster||'';lbv.src=it.video;lbv.play().catch(()=>{})}else{lbv.hidden=true;lbv.removeAttribute('src');lbi.hidden=false;lbi.src=it.src;lbi.alt=it.alt||''}
  $('#lb .cap').innerHTML=it.cap||'';const m=lb.list.length>1;$('#lb .pv').hidden=$('#lb .nx').hidden=!m}
-function open(list,i){lb={list,i};show();$('#lb').classList.add('on');$('#lb .x').focus()}
-function close(){lbv.pause();lbv.removeAttribute('src');$('#lb').classList.remove('on')}
+function open(list,i){lb={list,i};document.documentElement.style.overflow='hidden';show();$('#lb').classList.add('on');$('#lb .x').focus()}
+function close(){document.documentElement.style.overflow='';lbv.pause();lbv.removeAttribute('src');$('#lb').classList.remove('on')}
 $('#lb .x').onclick=close;$('#lb .pv').onclick=()=>{lb.i=(lb.i+lb.list.length-1)%lb.list.length;show()};$('#lb .nx').onclick=()=>{lb.i=(lb.i+1)%lb.list.length;show()};
 $('#lb').onclick=e=>{if(e.target.id==='lb')close()};
 /* galería con filtros; el texto aparece solo al ampliar */
@@ -55,10 +57,4 @@ if(METRICS.length)$('.od').innerHTML=METRICS.map(m=>`<div><strong data-v="${+m.v
 function odo(){$$('[data-v]').forEach(el=>{const v=+el.dataset.v;if(matchMedia('(prefers-reduced-motion:reduce)').matches){el.textContent=v;return}const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/1400);el.textContent=Math.round(v*(1-Math.pow(1-k,3)));k<1&&requestAnimationFrame(f)})(t0)})}
 /* equipo */
 $('.tm').innerHTML=TEAM.map(m=>`<div><div class="ph2">${m.photo?`<img src="${esc(m.photo)}" alt="${esc(m.name)}">`:'Foto pendiente'}</div><h3>${esc(m.name||'Nombre pendiente')}</h3><p>${esc(m.role||'Rol pendiente')}</p></div>`).join('');
-/* entrada */
-addEventListener('keydown',e=>{if($('#lb').classList.contains('on')){if(e.key==='Escape')close();if(e.key==='ArrowRight')$('#lb .nx').click();if(e.key==='ArrowLeft')$('#lb .pv').click();return}
- if(e.target.closest&&e.target.closest('video'))return;
- if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);if(e.key==='Home')go(0);if(e.key==='End')go(slides.length-1)});
-let tx=0,ty=0;addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
-addEventListener('touchend',e=>{if($('#lb').classList.contains('on')||e.target.closest('video'))return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1))},{passive:true});
-go((parseInt(location.hash.slice(1))||1)-1);
+addEventListener('keydown',e=>{if(!$('#lb').classList.contains('on'))return;if(e.key==='Escape')close();if(e.key==='ArrowRight')$('#lb .nx').click();if(e.key==='ArrowLeft')$('#lb .pv').click()});
